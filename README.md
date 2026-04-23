@@ -57,33 +57,41 @@ cmake --build build
 
 ## 3. Input / Đầu vào
 
-TODO_STUDENT: Mô tả rõ đầu vào của chương trình sau khi em hoàn thiện bài lab.
+Chương trình nhận dữ liệu từ **stdin** theo contract sau:
 
-Gợi ý nên nêu:
-- plaintext đang được nhập như thế nào
-- key đang được nhập như thế nào
-- chương trình nhận 1 block hay nhiều block
-- định dạng dữ liệu là chuỗi bit, chuỗi ký tự hay file
+- Dòng 1: mode (`1`, `2`, `3`, `4`)
+- Mode 1 (DES encrypt): nhập `plaintext` nhị phân + `key` 64-bit
+- Mode 2 (DES decrypt): nhập `ciphertext` nhị phân + `key` 64-bit
+- Mode 3 (TripleDES encrypt): nhập `plaintext` 64-bit + `K1` + `K2` + `K3` (mỗi key 64-bit)
+- Mode 4 (TripleDES decrypt): nhập `ciphertext` 64-bit + `K1` + `K2` + `K3` (mỗi key 64-bit)
+
+Định dạng dữ liệu sử dụng trong bài là **chuỗi bit** (chỉ gồm `0` và `1`).
+
+Với DES mode 1/2, chương trình hỗ trợ nhiều block:
+- Nếu đầu vào dài hơn 64 bit, dữ liệu sẽ được chia thành các block 64-bit.
+- Block cuối thiếu bit sẽ được bổ sung theo zero padding.
 
 ## 4. Output / Đầu ra
 
-TODO_STUDENT: Mô tả rõ đầu ra của chương trình.
+Chương trình in ra **kết quả cuối cùng dưới dạng chuỗi nhị phân**:
 
-Gợi ý nên nêu:
-- ciphertext hiển thị ra sao
-- có in round keys hay không
-- có hỗ trợ giải mã hay không
-- với TripleDES thì đầu ra gồm những gì
+- Mode 1: in ciphertext DES (có thể dài hơn 64 bit nếu plaintext nhiều block)
+- Mode 2: in plaintext DES đã giải mã
+- Mode 3: in ciphertext TripleDES (64 bit)
+- Mode 4: in plaintext TripleDES (64 bit)
+
+Mục tiêu CI là trích được chuỗi nhị phân cuối cùng từ output để đối chiếu vector kiểm thử.
 
 ## 5. Padding đang dùng
 
-TODO_STUDENT: Giải thích cơ chế padding em dùng.
+Lab dùng **zero padding** cho DES multi-block:
 
-Gợi ý:
-- nếu plaintext dài hơn 64 bit thì chia block như thế nào
-- nếu thiếu bit thì pad bằng `0` ra sao
-- hạn chế của zero padding là gì
-- vì sao cách này chỉ phù hợp cho bài học nhập môn, không phải thiết kế an toàn hoàn chỉnh trong thực tế
+- Dữ liệu được chia block 64-bit.
+- Nếu block cuối không đủ 64 bit, chương trình thêm các bit `0` vào cuối cho đủ 64 bit.
+
+Hạn chế của zero padding:
+- Không luôn xác định chính xác ranh giới dữ liệu gốc nếu plaintext thật sự kết thúc bằng `0`.
+- Đây là cách padding đơn giản cho mục tiêu học thuật, không nên xem là thiết kế đầy đủ cho hệ thống production.
 
 ## 6. Tests bắt buộc
 
